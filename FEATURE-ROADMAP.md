@@ -2,7 +2,7 @@
 
 ## Current State
 
-The shared Rust Office Engine foundation is under active Development. Authoritative `main` at `f1d58c94fff485221cff14dc8683848094bba216` contains canonical document state, stable identities, paragraph styles, reversible text/style commands, bounded undo/redo history, the mandatory repository documentation baseline, and Rust CI. The post-merge push validation passed. No usable Office editor or runtime is implemented.
+The shared Rust Office Engine foundation is under active Development. The initial document/command foundation was merged as `f1d58c94fff485221cff14dc8683848094bba216`, and repository-state documentation was subsequently reconciled on `main`. The active source line now also includes dependency-free native package identity and archive-entry path-safety primitives. No usable Office editor or runtime is implemented.
 
 ## Phase 0 — Foundation
 

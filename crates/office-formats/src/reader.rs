@@ -8,28 +8,28 @@ use std::error::Error;
 use std::fmt;
 use std::io::{Cursor, Read};
 
-use jsonschema::{options, Draft};
-use serde::de::DeserializeOwned;
+use jsonschema::{Draft, options};
 use serde::Deserialize;
+use serde::de::DeserializeOwned;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use zip::ZipArchive;
 
 use crate::integrity::{
-    validate_package_integrity, IntegrityCriticality, IntegrityEntry, IntegrityError,
-    PackageIntegrity,
+    IntegrityCriticality, IntegrityEntry, IntegrityError, PackageIntegrity,
+    validate_package_integrity,
 };
 use crate::semantic::{
-    validate_package_compatibility, validate_package_metadata, validate_package_relationships,
-    validate_writer_document, validate_writer_manifest, CompatibilityError, DocumentRole,
-    MetadataError, PackageCompatibility, PackageMetadata, PackageRelationship,
-    PackageRelationships, RelationshipKind, RelationshipsError, WriterDocument,
-    WriterDocumentError, WriterManifest, WriterManifestError, WriterParagraph, WriterRun,
+    CompatibilityError, DocumentRole, MetadataError, PackageCompatibility, PackageMetadata,
+    PackageRelationship, PackageRelationships, RelationshipKind, RelationshipsError,
+    WriterDocument, WriterDocumentError, WriterManifest, WriterManifestError, WriterParagraph,
+    WriterRun, validate_package_compatibility, validate_package_metadata,
+    validate_package_relationships, validate_writer_document, validate_writer_manifest,
 };
 use crate::{
-    validate_writer_entry_table, CompressionMethod, DocumentType, FormatVersion, PackageEntry,
-    PackageLimits, PackageStructureError, COMPATIBILITY_PART, INTEGRITY_PART, MANIFEST_PART,
-    METADATA_PART, MIMETYPE_PART, RELATIONSHIPS_PART, WRITER_DOCUMENT_PART,
+    COMPATIBILITY_PART, CompressionMethod, DocumentType, FormatVersion, INTEGRITY_PART,
+    MANIFEST_PART, METADATA_PART, MIMETYPE_PART, PackageEntry, PackageLimits,
+    PackageStructureError, RELATIONSHIPS_PART, WRITER_DOCUMENT_PART, validate_writer_entry_table,
 };
 
 const MANIFEST_SCHEMA: &str =
@@ -503,12 +503,13 @@ fn read_payloads(
 ) -> Result<BTreeMap<String, Vec<u8>>, WriterPackageReadError> {
     let mut payloads = BTreeMap::new();
     for entry in entries {
-        let mut file = archive.by_name(&entry.path).map_err(|error| {
-            WriterPackageReadError::EntryRead {
-                path: entry.path.clone(),
-                message: error.to_string(),
-            }
-        })?;
+        let mut file =
+            archive
+                .by_name(&entry.path)
+                .map_err(|error| WriterPackageReadError::EntryRead {
+                    path: entry.path.clone(),
+                    message: error.to_string(),
+                })?;
         let ceiling = entry
             .uncompressed_bytes
             .min(limits.max_entry_uncompressed_bytes())
@@ -540,12 +541,9 @@ fn required_payload<'a>(
     payloads: &'a BTreeMap<String, Vec<u8>>,
     path: &'static str,
 ) -> Result<&'a [u8], WriterPackageReadError> {
-    payloads
-        .get(path)
-        .map(Vec::as_slice)
-        .ok_or_else(|| {
-            WriterPackageReadError::Structure(PackageStructureError::MissingRequiredPart { path })
-        })
+    payloads.get(path).map(Vec::as_slice).ok_or_else(|| {
+        WriterPackageReadError::Structure(PackageStructureError::MissingRequiredPart { path })
+    })
 }
 
 fn decode_schema_checked<T: DeserializeOwned>(
@@ -621,7 +619,10 @@ fn validate_manifest_record(record: &ManifestRecord) -> Result<(), WriterPackage
         .unwrap_or("");
     let manifest = WriterManifest {
         format_family: &record.format_family,
-        format_version: FormatVersion::new(record.format_version.major, record.format_version.minor),
+        format_version: FormatVersion::new(
+            record.format_version.major,
+            record.format_version.minor,
+        ),
         document_type,
         document_role,
         document_id: &record.document_id,
@@ -730,11 +731,15 @@ fn validate_document_record(
         })
         .collect::<Vec<_>>();
     let decoded = WriterDocument {
-        schema_version: FormatVersion::new(record.schema_version.major, record.schema_version.minor),
+        schema_version: FormatVersion::new(
+            record.schema_version.major,
+            record.schema_version.minor,
+        ),
         document_id: &record.document_id,
         blocks: &blocks,
     };
-    validate_writer_document(&decoded, expected_document_id).map_err(WriterPackageReadError::Document)
+    validate_writer_document(&decoded, expected_document_id)
+        .map_err(WriterPackageReadError::Document)
 }
 
 fn validate_integrity_record(
@@ -779,9 +784,9 @@ fn verify_integrity_digests(
 ) -> Result<(), WriterPackageReadError> {
     for entry in &record.entries {
         let Some(payload) = payloads.get(&entry.path) else {
-            return Err(WriterPackageReadError::Integrity(IntegrityError::ExtraPath(
-                entry.path.clone(),
-            )));
+            return Err(WriterPackageReadError::Integrity(
+                IntegrityError::ExtraPath(entry.path.clone()),
+            ));
         };
         if sha256_hex(payload) != entry.sha256 {
             return Err(WriterPackageReadError::DigestMismatch {
@@ -807,8 +812,8 @@ fn sha256_hex(payload: &[u8]) -> String {
 mod tests {
     use super::*;
     use std::io::Write;
-    use zip::write::SimpleFileOptions;
     use zip::ZipWriter;
+    use zip::write::SimpleFileOptions;
 
     const FIXTURE: &[u8] =
         include_bytes!("../test-data/v1/fixtures/office-writer-v1-valid-minimal.gcwriter");
@@ -872,11 +877,7 @@ mod tests {
     fn malformed_required_json_is_rejected() {
         let malformed = rewrite_fixture(METADATA_PART, |_| b"{".to_vec());
         assert!(matches!(
-            validate_writer_package(
-                "malformed.gcwriter",
-                &malformed,
-                PackageLimits::default()
-            ),
+            validate_writer_package("malformed.gcwriter", &malformed, PackageLimits::default()),
             Err(WriterPackageReadError::InvalidJson {
                 path: METADATA_PART,
                 ..
@@ -892,10 +893,7 @@ mod tests {
         );
     }
 
-    fn rewrite_fixture(
-        target: &str,
-        transform: impl FnOnce(&[u8]) -> Vec<u8>,
-    ) -> Vec<u8> {
+    fn rewrite_fixture(target: &str, transform: impl FnOnce(&[u8]) -> Vec<u8>) -> Vec<u8> {
         let mut source = ZipArchive::new(Cursor::new(FIXTURE)).unwrap();
         let output = Cursor::new(Vec::new());
         let mut writer = ZipWriter::new(output);

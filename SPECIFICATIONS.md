@@ -16,6 +16,9 @@ This repository is the primary shared Office repository for the GoreeCloud Offic
 - Paragraph-style creation and assignment.
 - Reversible insert, delete, and paragraph-style commands.
 - Bounded undo/redo history with redo invalidation after new commands.
+- Dependency-free native package identity mappings for Writer, Spreadsheet, Presentations, Forms, and Database.
+- Native package v1 format-family/version identity and canonical common-part names.
+- Archive-entry path-safety validation for absolute paths, traversal, separator ambiguity, dot/empty segments, Windows drive prefixes, and NUL characters.
 - Source validation for formatting, build, unit tests, and Clippy.
 
 ## Accepted Architecture
@@ -33,7 +36,7 @@ The intended suite includes Office home, Writer, Spreadsheet, Presentations, For
 
 ## Current Boundaries
 
-The repository does not yet provide persistence, native Office package serialization, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
+The repository does not yet provide persistence, ZIP/JSON native Office package parsing or serialization, integrity verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
 
 ## Integral Platform Systems
 

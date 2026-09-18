@@ -18,7 +18,8 @@ The first source foundation currently contains:
 - Paragraph-style creation and assignment.
 - A reversible command framework.
 - Bounded undo/redo history.
-- Unit-test source for document and command behavior.
+- Dependency-free native package identity, extension/media-type mapping, and archive-entry path-safety primitives.
+- Unit-test source for document, command, and package-identity/path-safety behavior.
 - Pull-request CI for formatting, build, tests, and Clippy.
 
 This does **not** yet implement a usable Office application, Writer UI, persistence, native package serialization, autosave/recovery journals, shaping/layout, rendering, PDF export, import/export, collaboration, Glaze UI, Android, web, or Linux application clients.
@@ -49,6 +50,7 @@ Authoritative product, architecture, format, dependency, and implementation-task
 - [Privacy Policy](PRIVACY%20POLICY.md)
 - [Security](SECURITY.md)
 - [Development Notes](NOTES.md)
+
 ## Validation
 
 The repository workflow validates:

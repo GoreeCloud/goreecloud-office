@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/office-document",
     "crates/office-commands",
+    "crates/office-formats",
 ]
 
 [workspace.package]

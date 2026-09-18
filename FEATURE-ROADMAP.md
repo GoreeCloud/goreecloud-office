@@ -15,6 +15,7 @@ The shared Rust Office Engine foundation is under active Development. The initia
 - [x] Implement the first document and command source foundation.
 - [x] Implement the dependency-free native package identity and archive-entry path-safety foundation.
 - [x] Port the Writer v1 archive-entry-table/resource-limit validation contract behind a library-neutral Rust boundary.
+- [x] Port decoded Writer v1 manifest and content semantic validation without coupling the format layer to a JSON implementation.
 - [x] Complete the mandatory repository documentation baseline and verify it on authoritative `main`.
 - [ ] Establish truthful Platform Contract manifest state after the current nine-system schema is verified.
 

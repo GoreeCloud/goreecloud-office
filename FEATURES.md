@@ -20,6 +20,9 @@
 - Canonical lowercase UUID and RFC 3339 timestamp validation for decoded v1 records.
 - Decoded Writer manifest semantic validation for family/version/type, document identity, required parts, entry point, timestamps, and producer identity.
 - Decoded Writer document semantic validation for schema major version, manifest/document identity consistency, and unique paragraph/run object IDs.
+- Decoded package metadata schema-version validation.
+- Decoded package relationships validation for schema version, canonical relationship UUIDs, and relationship-ID uniqueness.
+- Decoded compatibility validation for schema version plus unique nonempty feature/capability identifiers.
 - Repository CI for formatting, build, unit tests, and Clippy.
 
 These are Development source capabilities only. They do not constitute a usable Office application or Writer editor.

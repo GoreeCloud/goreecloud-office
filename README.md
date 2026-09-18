@@ -34,7 +34,7 @@ The accepted architecture is:
 - Platform-native user interfaces rather than wrapper-first clients.
 - AGPL-3.0-or-later for the primary `goreecloud-office` repository.
 
-Authoritative product, architecture, format, dependency, and implementation-task records remain in the governed GoreeCloud Drive hierarchy until repository-local equivalents are added and synchronized.
+Authoritative product, architecture, format, dependency, and implementation-task records remain in the governed GoreeCloud documentation system. Repository-local records must stay synchronized with those governing sources where their scopes overlap.
 
 ## Repository Documentation
 

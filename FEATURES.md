@@ -13,6 +13,9 @@
 - Bounded undo/redo history.
 - Redo invalidation after a new successful command.
 - Preservation of command history after failed mutations.
+- Native package extension, provisional media-type, and manifest document-type mappings.
+- Native package v1 major-version identity.
+- Archive-entry path validation rejecting absolute paths, traversal, backslash separators, dot/empty segments, Windows drive prefixes, and NUL characters.
 - Repository CI for formatting, build, unit tests, and Clippy.
 
 These are Development source capabilities only. They do not constitute a usable Office application or Writer editor.

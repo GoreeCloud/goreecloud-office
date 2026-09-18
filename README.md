@@ -18,7 +18,7 @@ The first source foundation currently contains:
 - Paragraph-style creation and assignment.
 - A reversible command framework.
 - Bounded undo/redo history.
-- Dependency-free native package identity, archive/path and resource validation, plus decoded Writer v1 manifest/content semantic validation.
+- Dependency-free native package identity, archive/path and resource validation, decoded Writer v1 manifest/content semantic validation, and decoded metadata/relationships/compatibility record validation.
 - Unit-test source for document, command, package structure, and Writer manifest/content semantic behavior.
 - Pull-request CI for formatting, build, tests, and Clippy.
 

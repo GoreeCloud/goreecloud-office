@@ -1,0 +1,39 @@
+{
+  "$id": "urn:goreecloud:office:schema:package-compatibility:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "conversion_notes": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "required_capabilities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "used_features": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "used_features",
+    "required_capabilities"
+  ],
+  "title": "GoreeCloud Office Package Compatibility v1",
+  "type": "object"
+}

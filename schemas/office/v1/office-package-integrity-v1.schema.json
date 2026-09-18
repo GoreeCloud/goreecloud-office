@@ -1,0 +1,59 @@
+{
+  "$id": "urn:goreecloud:office:schema:package-integrity:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {
+      "const": "sha256"
+    },
+    "entries": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "byte_length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "criticality": {
+            "enum": [
+              "critical",
+              "noncritical",
+              null
+            ]
+          },
+          "media_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "byte_length",
+          "sha256"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "algorithm",
+    "entries"
+  ],
+  "title": "GoreeCloud Office Package Integrity v1",
+  "type": "object"
+}

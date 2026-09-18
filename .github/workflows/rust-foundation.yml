@@ -18,8 +18,13 @@ jobs:
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.85.1 --profile minimal --component rustfmt,clippy
-          rustup default 1.85.1
+          rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.88.0
+
+      - name: Resolve pinned dependency lock
+        run: |
+          cargo generate-lockfile
+          echo "CARGO_LOCK_BASE64=$(base64 -w0 Cargo.lock)"
 
       - name: Formatting
         run: cargo fmt --all --check

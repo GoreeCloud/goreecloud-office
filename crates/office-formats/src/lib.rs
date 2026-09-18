@@ -1,13 +1,16 @@
 //! Native package identity and archive-path safety foundation for the Office Engine.
 //!
-//! This crate defines dependency-free format identity primitives that can be
-//! reused by package readers and writers before ZIP and JSON implementations
-//! are selected. It does not parse or write Office packages.
+//! This crate defines Office-owned format identity, structural and semantic
+//! validators plus the first concrete local Writer v1 package reader. Third-party
+//! ZIP, JSON, JSON Schema, and digest implementations remain behind this boundary.
 
 #![forbid(unsafe_code)]
 
 /// Integrity-record semantics that do not compute cryptographic digests.
 pub mod integrity;
+
+/// Concrete local Writer package reading and validation.
+pub mod reader;
 
 /// Decoded manifest and Writer content semantic validation.
 pub mod semantic;

@@ -18,17 +18,17 @@ jobs:
 
       - name: Install Rust toolchain
         run: |
-          rustup toolchain install 1.85.1 --profile minimal --component rustfmt,clippy
-          rustup default 1.85.1
+          rustup toolchain install 1.88.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.88.0
 
       - name: Formatting
         run: cargo fmt --all --check
 
       - name: Build
-        run: cargo build --workspace --all-targets
+        run: cargo build --locked --workspace --all-targets
 
       - name: Unit tests
-        run: cargo test --workspace --all-targets
+        run: cargo test --locked --workspace --all-targets
 
       - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings

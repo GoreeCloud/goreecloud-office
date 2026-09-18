@@ -392,7 +392,7 @@ impl Error for MetadataError {}
 ///
 /// # Errors
 ///
-/// Returns MetadataError when the metadata schema version is unsupported.
+/// Returns `MetadataError` when the metadata schema version is unsupported.
 pub fn validate_package_metadata(metadata: &PackageMetadata<'_>) -> Result<(), MetadataError> {
     if metadata.schema_version != 1 {
         return Err(MetadataError::UnsupportedSchemaVersion(
@@ -475,7 +475,7 @@ impl Error for RelationshipsError {}
 ///
 /// # Errors
 ///
-/// Returns RelationshipsError for unsupported schema versions, invalid UUIDs,
+/// Returns `RelationshipsError` for unsupported schema versions, invalid UUIDs,
 /// or duplicate relationship IDs.
 pub fn validate_package_relationships(
     record: &PackageRelationships<'_>,
@@ -544,7 +544,7 @@ impl Error for CompatibilityError {}
 ///
 /// # Errors
 ///
-/// Returns CompatibilityError for unsupported schema versions or invalid
+/// Returns `CompatibilityError` for unsupported schema versions or invalid
 /// feature/capability arrays.
 pub fn validate_package_compatibility(
     record: &PackageCompatibility<'_>,

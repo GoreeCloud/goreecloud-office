@@ -88,9 +88,14 @@ impl fmt::Display for IntegrityError {
             Self::SelfReference => f.write_str("integrity.json must not hash itself"),
             Self::DuplicatePath(path) => write!(f, "integrity path is duplicated: {path}"),
             Self::InvalidDigest { index } => {
-                write!(f, "integrity digest at index {index} is not lowercase SHA-256 hex")
+                write!(
+                    f,
+                    "integrity digest at index {index} is not lowercase SHA-256 hex"
+                )
             }
-            Self::MissingPath(path) => write!(f, "integrity record is missing package path: {path}"),
+            Self::MissingPath(path) => {
+                write!(f, "integrity record is missing package path: {path}")
+            }
             Self::ExtraPath(path) => write!(f, "integrity record contains extra path: {path}"),
             Self::ByteLengthMismatch {
                 path,
@@ -218,7 +223,10 @@ mod tests {
             algorithm: "sha256",
             entries: &entries,
         };
-        assert_eq!(validate_package_integrity(&record, &package_entries()), Ok(()));
+        assert_eq!(
+            validate_package_integrity(&record, &package_entries()),
+            Ok(())
+        );
     }
 
     #[test]
@@ -242,8 +250,7 @@ mod tests {
         );
 
         let mut invalid = entries;
-        invalid[0].sha256 =
-            "ABCDEF0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+        invalid[0].sha256 = "ABCDEF0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
         record.algorithm = "sha256";
         record.entries = &invalid;
         assert_eq!(

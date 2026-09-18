@@ -1,0 +1,91 @@
+{
+  "$id": "urn:goreecloud:office:schema:writer-document:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "blocks": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            "type": "string"
+          },
+          "runs": {
+            "items": {
+              "additionalProperties": true,
+              "properties": {
+                "id": {
+                  "format": "uuid",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                "style": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "text"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "style": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "const": "paragraph"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "runs"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "document_id": {
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "additionalProperties": false,
+      "properties": {
+        "major": {
+          "const": 1
+        },
+        "minor": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "major",
+        "minor"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_id",
+    "blocks"
+  ],
+  "title": "GoreeCloud Writer Document v1",
+  "type": "object"
+}

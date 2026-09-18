@@ -1,0 +1,105 @@
+{
+  "$id": "urn:goreecloud:office:schema:package-manifest:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "document_id": {
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "document_role": {
+      "enum": [
+        "document",
+        "template"
+      ]
+    },
+    "document_type": {
+      "enum": [
+        "writer",
+        "spreadsheet",
+        "presentation",
+        "form",
+        "database"
+      ]
+    },
+    "entry_points": {
+      "additionalProperties": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minProperties": 1,
+      "type": "object"
+    },
+    "format_family": {
+      "const": "goreecloud.office"
+    },
+    "format_version": {
+      "additionalProperties": false,
+      "properties": {
+        "major": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "minor": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "major",
+        "minor"
+      ],
+      "type": "object"
+    },
+    "last_saved_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "producer": {
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "type": "object"
+    },
+    "required_parts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "format_family",
+    "format_version",
+    "document_type",
+    "document_role",
+    "document_id",
+    "required_parts",
+    "entry_points",
+    "created_at",
+    "last_saved_at",
+    "producer"
+  ],
+  "title": "GoreeCloud Office Package Manifest v1",
+  "type": "object"
+}

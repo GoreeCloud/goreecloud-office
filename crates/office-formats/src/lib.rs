@@ -373,9 +373,9 @@ impl<'a> PackageEntry<'a> {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PackageLimits {
     max_entries: usize,
-    max_entry_uncompressed_bytes: u64,
-    max_total_uncompressed_bytes: u64,
-    max_compression_ratio: u64,
+    entry_uncompressed_ceiling: u64,
+    package_uncompressed_ceiling: u64,
+    compression_ratio_ceiling: u64,
 }
 
 impl PackageLimits {
@@ -389,9 +389,9 @@ impl PackageLimits {
     ) -> Self {
         Self {
             max_entries,
-            max_entry_uncompressed_bytes,
-            max_total_uncompressed_bytes,
-            max_compression_ratio,
+            entry_uncompressed_ceiling: max_entry_uncompressed_bytes,
+            package_uncompressed_ceiling: max_total_uncompressed_bytes,
+            compression_ratio_ceiling: max_compression_ratio,
         }
     }
 
@@ -404,19 +404,19 @@ impl PackageLimits {
     /// Returns the maximum uncompressed size of one entry.
     #[must_use]
     pub const fn max_entry_uncompressed_bytes(self) -> u64 {
-        self.max_entry_uncompressed_bytes
+        self.entry_uncompressed_ceiling
     }
 
     /// Returns the maximum total uncompressed package size.
     #[must_use]
     pub const fn max_total_uncompressed_bytes(self) -> u64 {
-        self.max_total_uncompressed_bytes
+        self.package_uncompressed_ceiling
     }
 
     /// Returns the maximum accepted uncompressed-to-compressed size ratio.
     #[must_use]
     pub const fn max_compression_ratio(self) -> u64 {
-        self.max_compression_ratio
+        self.compression_ratio_ceiling
     }
 }
 
@@ -561,12 +561,12 @@ impl Error for PackageStructureError {
 /// Validates Writer v1 archive structure using only ZIP entry metadata.
 ///
 /// This is intentionally independent of any ZIP library. A future adapter must
-/// inspect the archive, construct PackageEntry values, and call this function
+/// inspect the archive, construct [`PackageEntry`] values, and call this function
 /// before reading or extracting entry payloads.
 ///
 /// # Errors
 ///
-/// Returns PackageStructureError when the entry table violates the Writer v1
+/// Returns [`PackageStructureError`] when the entry table violates the Writer v1
 /// package contract or configured resource limits.
 pub fn validate_writer_entry_table(
     entries: &[PackageEntry<'_>],
@@ -607,19 +607,19 @@ pub fn validate_writer_entry_table(
             });
         }
 
-        if entry.uncompressed_bytes > limits.max_entry_uncompressed_bytes {
+        if entry.uncompressed_bytes > limits.entry_uncompressed_ceiling {
             return Err(PackageStructureError::EntryTooLarge {
                 path: entry.path.to_owned(),
                 actual: entry.uncompressed_bytes,
-                maximum: limits.max_entry_uncompressed_bytes,
+                maximum: limits.entry_uncompressed_ceiling,
             });
         }
 
         total_uncompressed = total_uncompressed.saturating_add(entry.uncompressed_bytes);
-        if total_uncompressed > limits.max_total_uncompressed_bytes {
+        if total_uncompressed > limits.package_uncompressed_ceiling {
             return Err(PackageStructureError::PackageTooLarge {
                 actual: total_uncompressed,
-                maximum: limits.max_total_uncompressed_bytes,
+                maximum: limits.package_uncompressed_ceiling,
             });
         }
 
@@ -627,13 +627,13 @@ pub fn validate_writer_entry_table(
             && entry.uncompressed_bytes
                 > entry
                     .compressed_bytes
-                    .saturating_mul(limits.max_compression_ratio)
+                    .saturating_mul(limits.compression_ratio_ceiling)
         {
             return Err(PackageStructureError::CompressionRatioTooHigh {
                 path: entry.path.to_owned(),
                 uncompressed_bytes: entry.uncompressed_bytes,
                 compressed_bytes: entry.compressed_bytes,
-                maximum_ratio: limits.max_compression_ratio,
+                maximum_ratio: limits.compression_ratio_ceiling,
             });
         }
     }

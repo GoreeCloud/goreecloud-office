@@ -23,6 +23,7 @@
 - Decoded package metadata schema-version validation.
 - Decoded package relationships validation for schema version, canonical relationship UUIDs, and relationship-ID uniqueness.
 - Decoded compatibility validation for schema version plus unique nonempty feature/capability identifiers.
+- Decoded integrity-record validation for schema/algorithm identity, lowercase SHA-256 digest syntax, safe unique paths, exact package-file coverage, self-reference rejection, and declared byte-length agreement with archive metadata.
 - Repository CI for formatting, build, unit tests, and Clippy.
 
 These are Development source capabilities only. They do not constitute a usable Office application or Writer editor.

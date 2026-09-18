@@ -713,15 +713,8 @@ mod tests {
 
     #[test]
     fn rejects_duplicate_package_entry() {
-        let bytes = valid_package();
-        let mut entries = read_entries(&bytes);
-        let duplicate = entries
-            .iter()
-            .find(|entry| entry.name == MANIFEST_PATH)
-            .unwrap()
-            .clone();
-        entries.push(duplicate);
-        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+        let bytes = include_bytes!("../../../tests/fixtures/duplicate-manifest.gcwriter");
+        assert!(validate_writer_package("fixture.gcwriter", bytes).is_err());
     }
 
     #[test]

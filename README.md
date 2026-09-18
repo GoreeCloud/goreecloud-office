@@ -36,6 +36,19 @@ The accepted architecture is:
 
 Authoritative product, architecture, format, dependency, and implementation-task records remain in the governed GoreeCloud Drive hierarchy until repository-local equivalents are added and synchronized.
 
+## Repository Documentation
+
+- [Specifications](SPECIFICATIONS.md)
+- [Current Features](FEATURES.md)
+- [Capabilities](CAPABILITIES.md)
+- [Feature Roadmap](FEATURE-ROADMAP.md)
+- [Benefits](BENEFITS.md)
+- [Competitive Objectives](COMPETITIVE-OBJECTIVES.md)
+- [Branding](BRANDING.md)
+- [Pre-release User Manual](USER-MANUAL.md)
+- [Privacy Policy](PRIVACY%20POLICY.md)
+- [Security](SECURITY.md)
+- [Development Notes](NOTES.md)
 ## Validation
 
 The repository workflow validates:

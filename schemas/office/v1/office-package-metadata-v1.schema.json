@@ -1,0 +1,50 @@
+{
+  "$id": "urn:goreecloud:office:schema:package-metadata:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "contributors": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "creator": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "keywords": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "language": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "subject": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "title",
+    "language"
+  ],
+  "title": "GoreeCloud Office Package Metadata v1",
+  "type": "object"
+}

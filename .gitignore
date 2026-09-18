@@ -1,0 +1,16 @@
+/target/
+.env
+.env.*
+!.env.example
+!.env.template
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*.tmp
+*.temp
+*.log
+*.gcwriter.recovery
+/recovery/

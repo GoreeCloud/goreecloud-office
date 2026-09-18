@@ -1,0 +1,116 @@
+schema_version: "0.4"
+
+component:
+  type: application
+  id: goreecloud-office
+  product_name: GoreeCloud Office
+  repository: GoreeCloud/goreecloud-office
+
+lifecycle: experimental
+version: "0.1.0"
+
+supported_platforms:
+  - web
+  - android
+  - linux-desktop
+
+platform_systems:
+  manager:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "No Office-specific GoreeCloud Manager runtime integration or acceptance evidence exists."
+  privacy_shield:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Local-first privacy boundaries are specified, but no Office-specific Privacy Shield runtime integration or acceptance evidence exists."
+  wardveil_security:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Bounded package parser hardening exists in source, but no Office-specific Wardveil Security integration or acceptance evidence exists."
+  everkeep:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Recovery architecture is planned; no Office-specific Everkeep runtime integration or acceptance evidence exists."
+  glaze_ui:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "No Office user-facing graphical client exists in the current source slice."
+  mesh:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "No Office-specific Mesh discovery, event, relationship, or acceptance implementation exists."
+    capabilities: []
+    dependencies: []
+    published_events: []
+    consumed_events: []
+  identity:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Core local file editing must not require an account; networked identity/collaboration integration remains unimplemented."
+  policy:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "No Office-specific GoreeCloud Policy integration or acceptance evidence exists."
+  observability:
+    result: applicable-blocked
+    version: null
+    evidence: []
+    notes: "Repository tests and CI are not GoreeCloud Observability runtime acceptance evidence."
+
+continuity:
+  backup:
+    required: true
+    requirements:
+      - "User-owned Office files and relevant application configuration require defined recoverability."
+  restore:
+    required: true
+    requirements:
+      - "Recovery must distinguish canonical saved files from temporary recovery journals."
+  export:
+    required: true
+    requirements:
+      - "Users require portable export to supported common formats."
+  portability:
+    required: true
+    requirements:
+      - "Native GoreeCloud Office formats must not become an unnecessary lock-in boundary."
+
+external_dependencies:
+  - id: rust
+    purpose: "Shared Office Engine implementation language and toolchain."
+    status: development
+  - id: zip
+    purpose: "Bounded ZIP package reading and writing for the native Office v1 container."
+    status: development
+  - id: serde
+    purpose: "Structured Rust serialization/deserialization foundation."
+    status: development
+  - id: sha2
+    purpose: "SHA-256 integrity calculation for protected package parts."
+    status: development
+
+compatibility:
+  platform_contract: "0.4"
+  requires: []
+  provides: []
+
+evidence:
+  acceptance_tests: []
+  release: []
+
+conformance:
+  status: unverified
+  validated_at: null
+  evidence: []
+  blockers:
+    - "Only the initial document/file-format Development foundation is implemented."
+    - "No Office graphical client, production deployment, release artifact, or Stable qualification exists."
+    - "No Office-specific acceptance evidence exists for any of the nine Integral Platform Systems."

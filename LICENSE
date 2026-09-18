@@ -1,0 +1,14 @@
+GoreeCloud Office
+Copyright (C) 2026 GoreeCloud
+
+License: GNU Affero General Public License version 3 or later
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+This repository is licensed under the GNU Affero General Public License, version 3, or (at your option) any later version.
+
+The Office-specific GoreeCloud license decision selects AGPL-3.0-or-later for the primary GoreeCloud/goreecloud-office repository.
+
+The complete GNU Affero General Public License version 3 terms are published by the Free Software Foundation at:
+https://www.gnu.org/licenses/agpl-3.0.html
+
+Third-party code, dependencies, assets, and incorporated materials remain subject to their own applicable license and notice requirements.

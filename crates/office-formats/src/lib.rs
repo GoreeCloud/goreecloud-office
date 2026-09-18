@@ -1,4 +1,4 @@
-use goreecloud_office_document::{validate_canonical_uuid, WriterDocument};
+use goreecloud_office_document::{WriterDocument, validate_canonical_uuid};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, HashSet};
@@ -236,7 +236,10 @@ pub fn build_writer_package(input: &WriterPackageInput) -> Result<Vec<u8>, Packa
     };
 
     let mut parts = BTreeMap::new();
-    parts.insert(MANIFEST_PATH.to_string(), serde_json::to_vec_pretty(&manifest)?);
+    parts.insert(
+        MANIFEST_PATH.to_string(),
+        serde_json::to_vec_pretty(&manifest)?,
+    );
     parts.insert(
         METADATA_PATH.to_string(),
         serde_json::to_vec_pretty(&input.metadata)?,
@@ -437,8 +440,7 @@ pub fn validate_writer_package(file_name: &str, bytes: &[u8]) -> Result<(), Pack
             "unsupported metadata schema version".into(),
         ));
     }
-    let relationships: PackageRelationships =
-        serde_json::from_slice(&entries[RELATIONSHIPS_PATH])?;
+    let relationships: PackageRelationships = serde_json::from_slice(&entries[RELATIONSHIPS_PATH])?;
     if relationships.schema_version != 1 {
         return Err(PackageError::Invalid(
             "unsupported relationships schema version".into(),
@@ -449,8 +451,7 @@ pub fn validate_writer_package(file_name: &str, bytes: &[u8]) -> Result<(), Pack
             .map_err(|error| PackageError::Invalid(error.to_string()))?;
     }
 
-    let compatibility: PackageCompatibility =
-        serde_json::from_slice(&entries[COMPATIBILITY_PATH])?;
+    let compatibility: PackageCompatibility = serde_json::from_slice(&entries[COMPATIBILITY_PATH])?;
     if compatibility.schema_version != 1 {
         return Err(PackageError::Invalid(
             "unsupported compatibility schema version".into(),
@@ -505,7 +506,10 @@ fn validate_integrity(
         }
 
         let bytes = entries.get(&record.path).ok_or_else(|| {
-            PackageError::Invalid(format!("integrity record references missing part: {}", record.path))
+            PackageError::Invalid(format!(
+                "integrity record references missing part: {}",
+                record.path
+            ))
         })?;
 
         if record.byte_length != bytes.len() as u64 || record.sha256 != sha256_hex(bytes) {
@@ -530,9 +534,9 @@ fn is_safe_package_path(path: &str) -> bool {
         return false;
     }
 
-    Path::new(path).components().all(|component| {
-        matches!(component, Component::Normal(_))
-    })
+    Path::new(path)
+        .components()
+        .all(|component| matches!(component, Component::Normal(_)))
 }
 
 fn sha256_hex(bytes: &[u8]) -> String {

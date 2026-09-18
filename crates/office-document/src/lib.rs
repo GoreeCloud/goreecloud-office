@@ -65,10 +65,7 @@ impl fmt::Display for ValidationError {
 
 impl std::error::Error for ValidationError {}
 
-pub fn validate_canonical_uuid(
-    field: &'static str,
-    value: &str,
-) -> Result<(), ValidationError> {
+pub fn validate_canonical_uuid(field: &'static str, value: &str) -> Result<(), ValidationError> {
     let parsed = Uuid::try_parse(value).map_err(|_| ValidationError::InvalidUuid {
         field,
         value: value.to_owned(),

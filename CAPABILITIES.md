@@ -13,6 +13,7 @@ This repository currently provides a bounded Development source foundation for t
 - Paragraph-style creation and assignment.
 - Reversible insert, delete, and style commands.
 - Bounded undo/redo command history.
+- Dependency-free native package identity and archive-entry path-safety validation.
 - Source validation through formatting, build, unit tests, and Clippy.
 
 ## User Capabilities
@@ -38,7 +39,7 @@ None yet beyond repository development and CI workflows.
 
 ## Data and Interoperability
 
-No persistence or import/export capability is implemented in the current Rust foundation. Native Office package schemas and reference tooling exist in governed project records outside this repository and are planned for migration into Rust source when the package layer is implemented.
+No persistence or import/export capability is implemented. The Rust workspace now contains dependency-free native package identity, extension/media-type mapping, version-major identity, and archive-entry path-safety primitives. ZIP parsing, JSON parsing/schema validation, integrity validation, and package read/write remain unimplemented. The machine-readable schemas, fixture, and reference validator remain governed project evidence outside the repository until their migration is completed.
 
 ## Supported Platforms and Interfaces
 

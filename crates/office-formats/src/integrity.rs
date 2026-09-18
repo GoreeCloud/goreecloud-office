@@ -122,7 +122,7 @@ pub fn is_sha256_hex(value: &str) -> bool {
 ///
 /// # Errors
 ///
-/// Returns IntegrityError when the record violates the governed v1 integrity
+/// Returns `IntegrityError` when the record violates the governed v1 integrity
 /// contract.
 pub fn validate_package_integrity(
     record: &PackageIntegrity<'_>,

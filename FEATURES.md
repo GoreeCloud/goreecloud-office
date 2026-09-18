@@ -16,6 +16,7 @@
 - Native package extension, provisional media-type, and manifest document-type mappings.
 - Native package v1 major-version identity.
 - Archive-entry path validation rejecting absolute paths, traversal, backslash separators, dot/empty segments, Windows drive prefixes, and NUL characters.
+- Writer v1 archive-entry-table validation for duplicate paths, symlinks, STORE/DEFLATE-only compression, required parts, mimetype ordering/storage, per-entry and total uncompressed-size limits, and compression-ratio limits.
 - Repository CI for formatting, build, unit tests, and Clippy.
 
 These are Development source capabilities only. They do not constitute a usable Office application or Writer editor.

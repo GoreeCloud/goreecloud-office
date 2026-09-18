@@ -24,6 +24,7 @@ This repository is the primary shared Office repository for the GoreeCloud Offic
 - Decoded metadata v1 schema-version validation.
 - Decoded relationships v1 schema-version, canonical relationship-UUID, and relationship-ID uniqueness validation.
 - Decoded compatibility v1 schema-version and unique nonempty feature/capability identifier validation.
+- Decoded integrity v1 schema/algorithm validation, lowercase 64-hex SHA-256 syntax checks, path safety and uniqueness, self-reference rejection, exact package-file coverage, and declared byte-length agreement with archive metadata. This does not compute or verify digests.
 - Source validation for formatting, build, unit tests, and Clippy.
 
 ## Accepted Architecture
@@ -41,7 +42,7 @@ The intended suite includes Office home, Writer, Spreadsheet, Presentations, For
 
 ## Current Boundaries
 
-The repository does not yet provide persistence, a concrete ZIP adapter, JSON decoding or JSON Schema evaluation, native Office package serialization, integrity-record validation or SHA-256 verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
+The repository does not yet provide persistence, a concrete ZIP adapter, JSON decoding or JSON Schema evaluation, native Office package serialization, cryptographic SHA-256 digest computation/verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
 
 ## Integral Platform Systems
 

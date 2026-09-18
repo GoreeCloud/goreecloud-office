@@ -358,6 +358,219 @@ pub fn validate_writer_document(
     Ok(())
 }
 
+/// Borrowed portable package metadata after JSON decoding.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PackageMetadata<'a> {
+    /// Metadata schema version.
+    pub schema_version: u16,
+    /// Portable document title.
+    pub title: &'a str,
+    /// Optional language identifier.
+    pub language: Option<&'a str>,
+}
+
+/// Portable metadata semantic validation failures.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MetadataError {
+    /// Metadata schema version is unsupported.
+    UnsupportedSchemaVersion(u16),
+}
+
+impl fmt::Display for MetadataError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnsupportedSchemaVersion(version) => {
+                write!(f, "unsupported metadata schema version: {version}")
+            }
+        }
+    }
+}
+
+impl Error for MetadataError {}
+
+/// Validates decoded portable metadata semantics.
+///
+/// # Errors
+///
+/// Returns MetadataError when the metadata schema version is unsupported.
+pub fn validate_package_metadata(metadata: &PackageMetadata<'_>) -> Result<(), MetadataError> {
+    if metadata.schema_version != 1 {
+        return Err(MetadataError::UnsupportedSchemaVersion(
+            metadata.schema_version,
+        ));
+    }
+    Ok(())
+}
+
+/// Relationship kind defined by the v1 relationships schema.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum RelationshipKind {
+    /// Package-internal relationship.
+    Internal,
+    /// Relationship to an embedded package resource.
+    Embedded,
+    /// Relationship to an external resource.
+    External,
+}
+
+/// Borrowed relationship after JSON decoding.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PackageRelationship<'a> {
+    /// Stable relationship UUID.
+    pub id: &'a str,
+    /// Relationship source.
+    pub source: &'a str,
+    /// Relationship target.
+    pub target: &'a str,
+    /// Relationship kind.
+    pub kind: RelationshipKind,
+    /// Whether the relationship is required.
+    pub required: Option<bool>,
+    /// Optional declared media type.
+    pub media_type: Option<&'a str>,
+}
+
+/// Borrowed relationships record after JSON decoding.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PackageRelationships<'a> {
+    /// Relationships schema version.
+    pub schema_version: u16,
+    /// Relationship entries.
+    pub relationships: &'a [PackageRelationship<'a>],
+}
+
+/// Relationships semantic validation failures.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum RelationshipsError {
+    /// Relationships schema version is unsupported.
+    UnsupportedSchemaVersion(u16),
+    /// A relationship ID is not a canonical supported UUID.
+    InvalidRelationshipId {
+        /// Zero-based relationship index.
+        index: usize,
+    },
+    /// A relationship ID is repeated.
+    DuplicateRelationshipId(String),
+}
+
+impl fmt::Display for RelationshipsError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnsupportedSchemaVersion(version) => {
+                write!(f, "unsupported relationships schema version: {version}")
+            }
+            Self::InvalidRelationshipId { index } => {
+                write!(f, "relationship ID at index {index} is invalid")
+            }
+            Self::DuplicateRelationshipId(id) => {
+                write!(f, "relationship ID is duplicated: {id}")
+            }
+        }
+    }
+}
+
+impl Error for RelationshipsError {}
+
+/// Validates decoded package relationships.
+///
+/// # Errors
+///
+/// Returns RelationshipsError for unsupported schema versions, invalid UUIDs,
+/// or duplicate relationship IDs.
+pub fn validate_package_relationships(
+    record: &PackageRelationships<'_>,
+) -> Result<(), RelationshipsError> {
+    if record.schema_version != 1 {
+        return Err(RelationshipsError::UnsupportedSchemaVersion(
+            record.schema_version,
+        ));
+    }
+
+    let mut seen = BTreeSet::new();
+    for (index, relationship) in record.relationships.iter().enumerate() {
+        if !is_canonical_uuid(relationship.id) {
+            return Err(RelationshipsError::InvalidRelationshipId { index });
+        }
+        if !seen.insert(relationship.id) {
+            return Err(RelationshipsError::DuplicateRelationshipId(
+                relationship.id.to_owned(),
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// Borrowed compatibility record after JSON decoding.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct PackageCompatibility<'a> {
+    /// Compatibility schema version.
+    pub schema_version: u16,
+    /// Feature identifiers used by the package.
+    pub used_features: &'a [&'a str],
+    /// Capabilities required to interpret the package.
+    pub required_capabilities: &'a [&'a str],
+}
+
+/// Compatibility semantic validation failures.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum CompatibilityError {
+    /// Compatibility schema version is unsupported.
+    UnsupportedSchemaVersion(u16),
+    /// A used-feature identifier is empty or repeated.
+    InvalidUsedFeatures,
+    /// A required-capability identifier is empty or repeated.
+    InvalidRequiredCapabilities,
+}
+
+impl fmt::Display for CompatibilityError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let message = match self {
+            Self::UnsupportedSchemaVersion(_) => "unsupported compatibility schema version",
+            Self::InvalidUsedFeatures => "used_features must contain unique nonempty strings",
+            Self::InvalidRequiredCapabilities => {
+                "required_capabilities must contain unique nonempty strings"
+            }
+        };
+        match self {
+            Self::UnsupportedSchemaVersion(version) => write!(f, "{message}: {version}"),
+            _ => f.write_str(message),
+        }
+    }
+}
+
+impl Error for CompatibilityError {}
+
+/// Validates decoded compatibility semantics.
+///
+/// # Errors
+///
+/// Returns CompatibilityError for unsupported schema versions or invalid
+/// feature/capability arrays.
+pub fn validate_package_compatibility(
+    record: &PackageCompatibility<'_>,
+) -> Result<(), CompatibilityError> {
+    if record.schema_version != 1 {
+        return Err(CompatibilityError::UnsupportedSchemaVersion(
+            record.schema_version,
+        ));
+    }
+    if !unique_nonempty(record.used_features) {
+        return Err(CompatibilityError::InvalidUsedFeatures);
+    }
+    if !unique_nonempty(record.required_capabilities) {
+        return Err(CompatibilityError::InvalidRequiredCapabilities);
+    }
+    Ok(())
+}
+
+fn unique_nonempty(values: &[&str]) -> bool {
+    let mut seen = BTreeSet::new();
+    values
+        .iter()
+        .copied()
+        .all(|value| !value.is_empty() && seen.insert(value))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -377,6 +590,126 @@ mod tests {
             producer_name: "GoreeCloud Office reference package builder",
             producer_version: "0.1.0-prebootstrap",
         }
+    }
+
+    #[test]
+    fn metadata_fixture_semantics_validate() {
+        let metadata = PackageMetadata {
+            schema_version: 1,
+            title: "GoreeCloud Office format validation fixture",
+            language: Some("en-US"),
+        };
+        assert_eq!(validate_package_metadata(&metadata), Ok(()));
+
+        let unsupported = PackageMetadata {
+            schema_version: 2,
+            ..metadata
+        };
+        assert_eq!(
+            validate_package_metadata(&unsupported),
+            Err(MetadataError::UnsupportedSchemaVersion(2))
+        );
+    }
+
+    #[test]
+    fn relationships_validate_uuid_uniqueness() {
+        let relationships = [
+            PackageRelationship {
+                id: "d4d44444-4444-4444-8444-444444444444",
+                source: "content/document.json",
+                target: "assets/image.png",
+                kind: RelationshipKind::Embedded,
+                required: Some(false),
+                media_type: Some("image/png"),
+            },
+            PackageRelationship {
+                id: "e5e55555-5555-4555-8555-555555555555",
+                source: "content/document.json",
+                target: "https://example.invalid/",
+                kind: RelationshipKind::External,
+                required: Some(false),
+                media_type: None,
+            },
+        ];
+        let record = PackageRelationships {
+            schema_version: 1,
+            relationships: &relationships,
+        };
+        assert_eq!(validate_package_relationships(&record), Ok(()));
+
+        let duplicate = [relationships[0], relationships[0]];
+        let duplicate_record = PackageRelationships {
+            schema_version: 1,
+            relationships: &duplicate,
+        };
+        assert!(matches!(
+            validate_package_relationships(&duplicate_record),
+            Err(RelationshipsError::DuplicateRelationshipId(_))
+        ));
+    }
+
+    #[test]
+    fn relationships_reject_invalid_uuid_and_schema_version() {
+        let relationships = [PackageRelationship {
+            id: "not-a-uuid",
+            source: "",
+            target: "",
+            kind: RelationshipKind::Internal,
+            required: None,
+            media_type: None,
+        }];
+        let record = PackageRelationships {
+            schema_version: 1,
+            relationships: &relationships,
+        };
+        assert_eq!(
+            validate_package_relationships(&record),
+            Err(RelationshipsError::InvalidRelationshipId { index: 0 })
+        );
+
+        let empty: [PackageRelationship<'_>; 0] = [];
+        let unsupported = PackageRelationships {
+            schema_version: 2,
+            relationships: &empty,
+        };
+        assert_eq!(
+            validate_package_relationships(&unsupported),
+            Err(RelationshipsError::UnsupportedSchemaVersion(2))
+        );
+    }
+
+    #[test]
+    fn compatibility_fixture_and_uniqueness_rules_validate() {
+        let used_features = ["writer.paragraph", "writer.text-run"];
+        let required_capabilities: [&str; 0] = [];
+        let record = PackageCompatibility {
+            schema_version: 1,
+            used_features: &used_features,
+            required_capabilities: &required_capabilities,
+        };
+        assert_eq!(validate_package_compatibility(&record), Ok(()));
+
+        let duplicate = ["writer.paragraph", "writer.paragraph"];
+        let invalid = PackageCompatibility {
+            schema_version: 1,
+            used_features: &duplicate,
+            required_capabilities: &required_capabilities,
+        };
+        assert_eq!(
+            validate_package_compatibility(&invalid),
+            Err(CompatibilityError::InvalidUsedFeatures)
+        );
+
+        let empty_capability = [""];
+        let invalid = PackageCompatibility {
+            schema_version: 1,
+            used_features: &used_features,
+            required_capabilities: &empty_capability,
+        };
+        assert_eq!(
+            validate_package_compatibility(&invalid),
+            Err(CompatibilityError::InvalidRequiredCapabilities)
+        );
     }
 
     #[test]

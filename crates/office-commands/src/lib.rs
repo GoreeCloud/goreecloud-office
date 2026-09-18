@@ -1,4 +1,4 @@
-//! Undoable command framework for the GoreeCloud Office Engine.
+//! Undoable command framework for the `GoreeCloud` Office Engine.
 //!
 //! Commands are the mutation boundary for editor actions. Applying a command
 //! returns its inverse, allowing deterministic undo/redo without exposing
@@ -43,6 +43,11 @@ pub enum Command {
 
 impl Command {
     /// Applies the command and returns the exact inverse command.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CommandError::Document`] when the canonical document rejects
+    /// the requested mutation.
     pub fn apply(&self, document: &mut Document) -> Result<Self, CommandError> {
         match self {
             Self::InsertText { block, at, text } => {
@@ -140,6 +145,11 @@ impl CommandExecutor {
     }
 
     /// Executes a new user command.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CommandError::Document`] when the document rejects the
+    /// command. Failed commands do not change undo or redo history.
     pub fn execute(
         &mut self,
         document: &mut Document,
@@ -152,6 +162,11 @@ impl CommandExecutor {
     }
 
     /// Undoes the most recent successful command.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CommandError::NothingToUndo`] when no undo entry exists, or
+    /// [`CommandError::Document`] when applying the inverse command fails.
     pub fn undo(&mut self, document: &mut Document) -> Result<(), CommandError> {
         let inverse = self.undo_stack.pop().ok_or(CommandError::NothingToUndo)?;
         match inverse.apply(document) {
@@ -167,6 +182,11 @@ impl CommandExecutor {
     }
 
     /// Redoes the most recently undone command.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CommandError::NothingToRedo`] when no redo entry exists, or
+    /// [`CommandError::Document`] when replaying the command fails.
     pub fn redo(&mut self, document: &mut Document) -> Result<(), CommandError> {
         let command = self.redo_stack.pop().ok_or(CommandError::NothingToRedo)?;
         match command.apply(document) {

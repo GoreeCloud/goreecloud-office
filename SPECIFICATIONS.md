@@ -19,6 +19,7 @@ This repository is the primary shared Office repository for the GoreeCloud Offic
 - Dependency-free native package identity mappings for Writer, Spreadsheet, Presentations, Forms, and Database.
 - Native package v1 format-family/version identity and canonical common-part names.
 - Archive-entry path-safety validation for absolute paths, traversal, separator ambiguity, dot/empty segments, Windows drive prefixes, and NUL characters.
+- Library-neutral Writer v1 entry-table validation for duplicate paths, symbolic links, STORE/DEFLATE compression, required package parts, mimetype placement/storage, 4,096-entry ceiling, 64 MiB per-entry ceiling, 512 MiB total uncompressed ceiling, and 1000:1 compression-ratio ceiling.
 - Source validation for formatting, build, unit tests, and Clippy.
 
 ## Accepted Architecture
@@ -36,7 +37,7 @@ The intended suite includes Office home, Writer, Spreadsheet, Presentations, For
 
 ## Current Boundaries
 
-The repository does not yet provide persistence, ZIP/JSON native Office package parsing or serialization, integrity verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
+The repository does not yet provide persistence, a concrete ZIP adapter, JSON native Office package parsing or serialization, integrity verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
 
 ## Integral Platform Systems
 

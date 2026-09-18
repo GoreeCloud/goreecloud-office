@@ -1,4 +1,4 @@
-//! Canonical document-domain foundation for the GoreeCloud Office Engine.
+//! Canonical document-domain foundation for the `GoreeCloud` Office Engine.
 //!
 //! This crate intentionally has no external dependencies. It establishes the
 //! smallest authoritative document model needed to validate command semantics
@@ -138,12 +138,21 @@ pub enum DocumentError {
     /// The requested style does not exist.
     StyleNotFound(StyleId),
     /// A byte index does not fall on a UTF-8 character boundary.
-    InvalidUtf8Boundary { block: BlockId, index: usize },
+    InvalidUtf8Boundary {
+        /// Block containing the invalid byte position.
+        block: BlockId,
+        /// Invalid byte position.
+        index: usize,
+    },
     /// A text range is invalid for the requested block.
     InvalidRange {
+        /// Block containing the invalid range.
         block: BlockId,
+        /// Requested inclusive byte start.
         start: usize,
+        /// Requested exclusive byte end.
         end: usize,
+        /// Current paragraph byte length.
         len: usize,
     },
 }
@@ -248,6 +257,11 @@ impl Document {
     }
 
     /// Returns the first paragraph identity.
+    ///
+    /// # Panics
+    ///
+    /// Panics only if the internal document invariant is violated and the
+    /// document contains no top-level blocks.
     #[must_use]
     pub fn first_paragraph_id(&self) -> BlockId {
         self.blocks
@@ -266,6 +280,11 @@ impl Document {
     }
 
     /// Appends an empty paragraph and returns its stable identity.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DocumentError::StyleNotFound`] when `style` is not present
+    /// in the document style registry.
     pub fn append_paragraph(&mut self, style: StyleId) -> Result<BlockId, DocumentError> {
         self.ensure_style(style)?;
         let id = BlockId(self.allocate_object_id());
@@ -279,6 +298,13 @@ impl Document {
     }
 
     /// Inserts UTF-8 text at a validated byte boundary.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DocumentError::BlockNotFound`] when `block` does not exist,
+    /// [`DocumentError::InvalidRange`] when `at` exceeds the paragraph byte
+    /// length, or [`DocumentError::InvalidUtf8Boundary`] when `at` is not a
+    /// UTF-8 character boundary.
     pub fn insert_text(
         &mut self,
         block: BlockId,
@@ -303,6 +329,14 @@ impl Document {
     }
 
     /// Removes a validated byte range and returns the deleted text.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DocumentError::BlockNotFound`] when `block` does not exist,
+    /// [`DocumentError::InvalidRange`] when the requested byte range is
+    /// inverted or extends beyond the paragraph, or
+    /// [`DocumentError::InvalidUtf8Boundary`] when either endpoint is not a
+    /// UTF-8 character boundary.
     pub fn remove_text(
         &mut self,
         block: BlockId,
@@ -336,6 +370,11 @@ impl Document {
     }
 
     /// Assigns a paragraph style and returns the previous style.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`DocumentError::StyleNotFound`] when `style` is unknown or
+    /// [`DocumentError::BlockNotFound`] when `block` does not exist.
     pub fn set_paragraph_style(
         &mut self,
         block: BlockId,

@@ -775,8 +775,8 @@ mod tests {
     fn writer_entry_table_enforces_size_limits() {
         let mut entry_too_large = valid_writer_entries();
         entry_too_large[2] =
-            PackageEntry::new(METADATA_PART, CompressionMethod::Store, 101, 101, false);
-        let limits = PackageLimits::new(32, 100, 10_000, 1000);
+            PackageEntry::new(METADATA_PART, CompressionMethod::Store, 601, 601, false);
+        let limits = PackageLimits::new(32, 600, 10_000, 1000);
         assert_eq!(
             validate_writer_entry_table(&entry_too_large, limits),
             Err(PackageStructureError::EntryTooLarge {

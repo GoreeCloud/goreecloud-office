@@ -305,7 +305,7 @@ pub fn validate_writer_package(file_name: &str, bytes: &[u8]) -> Result<(), Pack
     }
 
     let mut archive = ZipArchive::new(Cursor::new(bytes))?;
-    if archive.len() == 0 || archive.len() > MAX_ENTRIES {
+    if archive.is_empty() || archive.len() > MAX_ENTRIES {
         return Err(PackageError::Invalid("invalid package entry count".into()));
     }
 

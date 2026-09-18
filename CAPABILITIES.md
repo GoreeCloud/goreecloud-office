@@ -39,7 +39,7 @@ None yet beyond repository development and CI workflows.
 
 ## Data and Interoperability
 
-No persistence or import/export capability is implemented. The Rust workspace now contains dependency-free native package identity, extension/media-type mapping, version-major identity, archive-entry path safety, and library-neutral Writer v1 entry-table validation for duplicate paths, symlinks, supported compression methods, required parts, mimetype ordering/storage, size ceilings, and compression-ratio limits. Concrete ZIP parsing, JSON decoding/JSON Schema evaluation, cryptographic SHA-256 digest computation/verification, and package read/write remain unimplemented. The machine-readable schemas, fixture, and reference validator remain governed project evidence outside the repository until their migration is completed.
+No persistence or import/export capability is implemented. The Rust workspace now contains dependency-free native package identity, extension/media-type mapping, version-major identity, archive-entry path safety, library-neutral Writer v1 entry-table validation, decoded Writer/common-record semantics, and integrity-record structure/coverage/byte-length semantics. Repository test data now includes byte-matched copies of the six governed JSON Schemas and the canonical minimal valid `.gcwriter` fixture with provenance. Concrete ZIP parsing, JSON decoding/JSON Schema evaluation, cryptographic SHA-256 digest computation/verification, package read/write, and the retained reference validator remain outside the implemented runtime boundary.
 
 ## Supported Platforms and Interfaces
 

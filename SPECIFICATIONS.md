@@ -21,6 +21,9 @@ This repository is the primary shared Office repository for the GoreeCloud Offic
 - Archive-entry path-safety validation for absolute paths, traversal, separator ambiguity, dot/empty segments, Windows drive prefixes, and NUL characters.
 - Library-neutral Writer v1 entry-table validation for duplicate paths, symbolic links, STORE/DEFLATE compression, required package parts, mimetype placement/storage, 4,096-entry ceiling, 64 MiB per-entry ceiling, 512 MiB total uncompressed ceiling, and 1000:1 compression-ratio ceiling.
 - Decoded Writer v1 semantic validation for canonical UUIDs, RFC 3339 timestamps, manifest family/version/type/role/required-part/entry-point/producer fields, document identity consistency, and unique paragraph/run object IDs.
+- Decoded metadata v1 schema-version validation.
+- Decoded relationships v1 schema-version, canonical relationship-UUID, and relationship-ID uniqueness validation.
+- Decoded compatibility v1 schema-version and unique nonempty feature/capability identifier validation.
 - Source validation for formatting, build, unit tests, and Clippy.
 
 ## Accepted Architecture
@@ -38,7 +41,7 @@ The intended suite includes Office home, Writer, Spreadsheet, Presentations, For
 
 ## Current Boundaries
 
-The repository does not yet provide persistence, a concrete ZIP adapter, JSON decoding or JSON Schema evaluation, native Office package serialization, integrity verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
+The repository does not yet provide persistence, a concrete ZIP adapter, JSON decoding or JSON Schema evaluation, native Office package serialization, integrity-record validation or SHA-256 verification, atomic save, autosave, recovery journals, text shaping, bidirectional layout, pagination, rendering, printing, PDF export, document import/export, Glaze UI, platform application shells, synchronization, collaboration, or a production runtime.
 
 ## Integral Platform Systems
 

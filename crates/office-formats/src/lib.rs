@@ -554,6 +554,14 @@ fn sha256_hex(bytes: &[u8]) -> String {
 mod tests {
     use super::*;
     use goreecloud_office_document::{SchemaVersion, TextRun, WriterBlock, WriterBlockType};
+    use serde_json::json;
+
+    #[derive(Clone)]
+    struct RawZipEntry {
+        name: String,
+        compression: CompressionMethod,
+        data: Vec<u8>,
+    }
 
     fn sample_input() -> WriterPackageInput {
         WriterPackageInput {
@@ -586,42 +594,180 @@ mod tests {
         }
     }
 
+    fn valid_package() -> Vec<u8> {
+        build_writer_package(&sample_input()).unwrap()
+    }
+
+    fn read_entries(bytes: &[u8]) -> Vec<RawZipEntry> {
+        let mut archive = ZipArchive::new(Cursor::new(bytes)).unwrap();
+        let mut entries = Vec::with_capacity(archive.len());
+
+        for index in 0..archive.len() {
+            let mut file = archive.by_index(index).unwrap();
+            let mut data = Vec::new();
+            file.read_to_end(&mut data).unwrap();
+            entries.push(RawZipEntry {
+                name: file.name().to_owned(),
+                compression: file.compression(),
+                data,
+            });
+        }
+
+        entries
+    }
+
+    fn write_entries(entries: &[RawZipEntry]) -> Vec<u8> {
+        let cursor = Cursor::new(Vec::new());
+        let mut writer = ZipWriter::new(cursor);
+
+        for entry in entries {
+            writer
+                .start_file(
+                    &entry.name,
+                    SimpleFileOptions::default().compression_method(entry.compression),
+                )
+                .unwrap();
+            writer.write_all(&entry.data).unwrap();
+        }
+
+        writer.finish().unwrap().into_inner()
+    }
+
+    fn mutate_json_entry<F>(bytes: &[u8], path: &str, mutate: F) -> Vec<u8>
+    where
+        F: FnOnce(&mut serde_json::Value),
+    {
+        let mut entries = read_entries(bytes);
+        let entry = entries
+            .iter_mut()
+            .find(|entry| entry.name == path)
+            .expect("target JSON entry must exist");
+        let mut value: serde_json::Value = serde_json::from_slice(&entry.data).unwrap();
+        mutate(&mut value);
+        entry.data = serde_json::to_vec_pretty(&value).unwrap();
+        write_entries(&entries)
+    }
+
     #[test]
-    fn builds_and_validates_minimal_writer_package() {
-        let bytes = build_writer_package(&sample_input()).unwrap();
+    fn accepts_valid_minimal_writer_package() {
+        let bytes = valid_package();
         validate_writer_package("fixture.gcwriter", &bytes).unwrap();
     }
 
     #[test]
     fn rejects_wrong_extension() {
-        let bytes = build_writer_package(&sample_input()).unwrap();
+        let bytes = valid_package();
         assert!(validate_writer_package("fixture.zip", &bytes).is_err());
     }
 
     #[test]
-    fn rejects_tampered_package_bytes() {
-        let mut bytes = build_writer_package(&sample_input()).unwrap();
-        let needle = b"Hello, GoreeCloud Office.";
-        let position = bytes
-            .windows(needle.len())
-            .position(|window| window == needle);
-
-        if let Some(position) = position {
-            bytes[position] = b'J';
-            assert!(validate_writer_package("fixture.gcwriter", &bytes).is_err());
-        } else {
-            // Deflate may hide the source string. A truncated archive is still an
-            // intentional corruption case and must fail closed.
-            bytes.truncate(bytes.len().saturating_sub(8));
-            assert!(validate_writer_package("fixture.gcwriter", &bytes).is_err());
-        }
+    fn rejects_mimetype_when_not_first() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries.swap(0, 1);
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
     }
 
     #[test]
-    fn safe_path_policy_rejects_traversal_and_absolute_paths() {
+    fn rejects_compressed_mimetype() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries[0].compression = CompressionMethod::Deflated;
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_incorrect_mimetype_value() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries[0].data = b"application/zip".to_vec();
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_path_traversal_entry() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries.push(RawZipEntry {
+            name: "../escape.json".into(),
+            compression: CompressionMethod::Stored,
+            data: b"{}".to_vec(),
+        });
         assert!(!is_safe_package_path("../escape.json"));
-        assert!(!is_safe_package_path("/absolute.json"));
         assert!(!is_safe_package_path("content\\document.json"));
-        assert!(is_safe_package_path("content/document.json"));
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_absolute_path_entry() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries.push(RawZipEntry {
+            name: "/absolute.json".into(),
+            compression: CompressionMethod::Stored,
+            data: b"{}".to_vec(),
+        });
+        assert!(!is_safe_package_path("/absolute.json"));
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_duplicate_package_entry() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        let duplicate = entries
+            .iter()
+            .find(|entry| entry.name == MANIFEST_PATH)
+            .unwrap()
+            .clone();
+        entries.push(duplicate);
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_missing_required_part() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        entries.retain(|entry| entry.name != METADATA_PATH);
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
+    }
+
+    #[test]
+    fn rejects_sha256_tampering() {
+        let bytes = valid_package();
+        let mutated = mutate_json_entry(&bytes, METADATA_PATH, |value| {
+            value["title"] = json!("Tampered title");
+        });
+        assert!(validate_writer_package("fixture.gcwriter", &mutated).is_err());
+    }
+
+    #[test]
+    fn rejects_manifest_document_id_mismatch() {
+        let bytes = valid_package();
+        let mutated = mutate_json_entry(&bytes, MANIFEST_PATH, |value| {
+            value["document_id"] = json!("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+        });
+        assert!(validate_writer_package("fixture.gcwriter", &mutated).is_err());
+    }
+
+    #[test]
+    fn rejects_unsupported_format_major_version() {
+        let bytes = valid_package();
+        let mutated = mutate_json_entry(&bytes, MANIFEST_PATH, |value| {
+            value["format_version"]["major"] = json!(2);
+        });
+        assert!(validate_writer_package("fixture.gcwriter", &mutated).is_err());
+    }
+
+    #[test]
+    fn rejects_malformed_required_json() {
+        let bytes = valid_package();
+        let mut entries = read_entries(&bytes);
+        let manifest = entries
+            .iter_mut()
+            .find(|entry| entry.name == MANIFEST_PATH)
+            .unwrap();
+        manifest.data = b"{".to_vec();
+        assert!(validate_writer_package("fixture.gcwriter", &write_entries(&entries)).is_err());
     }
 }

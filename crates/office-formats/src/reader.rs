@@ -355,7 +355,7 @@ struct IntegrityRecord {
 ///
 /// # Errors
 ///
-/// Returns WriterPackageReadError when any implemented v1 package invariant
+/// Returns `WriterPackageReadError` when any implemented v1 package invariant
 /// fails.
 pub fn validate_writer_package(
     file_name: &str,
@@ -491,7 +491,6 @@ fn map_compression(method: zip::CompressionMethod) -> CompressionMethod {
     match method {
         zip::CompressionMethod::Stored => CompressionMethod::Store,
         zip::CompressionMethod::Deflated => CompressionMethod::Deflate,
-        zip::CompressionMethod::Unsupported(method) => CompressionMethod::Unsupported(method),
         _ => CompressionMethod::Unsupported(u16::MAX),
     }
 }
@@ -541,9 +540,9 @@ fn required_payload<'a>(
     payloads: &'a BTreeMap<String, Vec<u8>>,
     path: &'static str,
 ) -> Result<&'a [u8], WriterPackageReadError> {
-    payloads.get(path).map(Vec::as_slice).ok_or_else(|| {
-        WriterPackageReadError::Structure(PackageStructureError::MissingRequiredPart { path })
-    })
+    payloads.get(path).map(Vec::as_slice).ok_or(
+        WriterPackageReadError::Structure(PackageStructureError::MissingRequiredPart { path }),
+    )
 }
 
 fn decode_schema_checked<T: DeserializeOwned>(
@@ -615,8 +614,7 @@ fn validate_manifest_record(record: &ManifestRecord) -> Result<(), WriterPackage
     let document_entry_point = record
         .entry_points
         .get("document")
-        .map(String::as_str)
-        .unwrap_or("");
+        .map_or("", String::as_str);
     let manifest = WriterManifest {
         format_family: &record.format_family,
         format_version: FormatVersion::new(

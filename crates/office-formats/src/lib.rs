@@ -218,7 +218,7 @@ impl Error for PackagePathError {}
 ///
 /// # Errors
 ///
-/// Returns PackagePathError when the path is unsafe or non-canonical.
+/// Returns [`PackagePathError`] when the path is unsafe or non-canonical.
 pub fn validate_entry_path(path: &str) -> Result<(), PackagePathError> {
     if path.is_empty() {
         return Err(PackagePathError::Empty);
@@ -234,11 +234,7 @@ pub fn validate_entry_path(path: &str) -> Result<(), PackagePathError> {
     }
 
     let segments = path.split('/');
-    if segments
-        .clone()
-        .next()
-        .is_some_and(is_windows_drive_prefix)
-    {
+    if segments.clone().next().is_some_and(is_windows_drive_prefix) {
         return Err(PackagePathError::DrivePrefix);
     }
 

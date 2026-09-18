@@ -44,11 +44,12 @@ jobs:
           cargo --version
           rustc --version | grep -E '^rustc 1\.98\.1 '
 
-      - name: Generate dependency lock
+      - name: Verify dependency lock
         shell: bash
         run: |
           set -euo pipefail
           cargo generate-lockfile
+          git diff --exit-code -- Cargo.lock
 
       - name: Verify formatting
         run: cargo fmt --all -- --check
@@ -69,12 +70,3 @@ jobs:
           for schema in schemas/office/v1/*.schema.json; do
             python3 -m json.tool "$schema" >/dev/null
           done
-
-      - name: Emit generated Cargo.lock for bootstrap reconciliation
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo 'CARGO_LOCK_BASE64_BEGIN'
-          base64 -w0 Cargo.lock
-          echo
-          echo 'CARGO_LOCK_BASE64_END'

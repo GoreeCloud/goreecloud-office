@@ -25,6 +25,7 @@ This repository is the primary shared Office repository for the GoreeCloud Offic
 - Decoded relationships v1 schema-version, canonical relationship-UUID, and relationship-ID uniqueness validation.
 - Decoded compatibility v1 schema-version and unique nonempty feature/capability identifier validation.
 - Decoded integrity v1 schema/algorithm validation, lowercase 64-hex SHA-256 syntax checks, path safety and uniqueness, self-reference rejection, exact package-file coverage, and declared byte-length agreement with archive metadata. This does not compute or verify digests.
+- Repository-local test-data copies of the six authoritative Office Native Package v1 JSON Schemas and the canonical minimal valid Writer fixture, with provenance and imported-byte SHA-256 values recorded alongside the copies.
 - Source validation for formatting, build, unit tests, and Clippy.
 
 ## Accepted Architecture

@@ -19,7 +19,8 @@ The first source foundation currently contains:
 - A reversible command framework.
 - Bounded undo/redo history.
 - Dependency-free native package identity, archive/path and resource validation, decoded Writer v1 manifest/content semantics, decoded metadata/relationships/compatibility semantics, and integrity-record semantics without digest computation.
-- Unit-test source for document, command, package structure, decoded record semantics, and integrity-record behavior.
+- Repository-local test-data copies of the six governed Office Native Package v1 JSON Schemas and the canonical minimal valid `.gcwriter` fixture, with source IDs and imported-byte hashes recorded for traceability.
+- Unit-test source for document, command, package structure, decoded record semantics, integrity-record behavior, and governed schema/fixture asset presence.
 - Pull-request CI for formatting, build, tests, and Clippy.
 
 This does **not** yet implement a usable Office application, Writer UI, persistence, native package serialization, autosave/recovery journals, shaping/layout, rendering, PDF export, import/export, collaboration, Glaze UI, Android, web, or Linux application clients.

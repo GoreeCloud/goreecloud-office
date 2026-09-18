@@ -1,0 +1,13 @@
+[package]
+name = "goreecloud-office-commands"
+description = "Undoable command framework for the GoreeCloud Office Engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+goreecloud-office-document = { path = "../office-document" }
+
+[lints]
+workspace = true

@@ -17,6 +17,7 @@ The shared Rust Office Engine foundation is under active Development. The initia
 - [x] Port the Writer v1 archive-entry-table/resource-limit validation contract behind a library-neutral Rust boundary.
 - [x] Port decoded Writer v1 manifest and content semantic validation without coupling the format layer to a JSON implementation.
 - [x] Port decoded metadata, relationships, and compatibility v1 semantic validation behind the same dependency-free boundary.
+- [x] Port integrity-record structure, coverage, digest-syntax, and byte-length semantics without claiming cryptographic SHA-256 verification.
 - [x] Complete the mandatory repository documentation baseline and verify it on authoritative `main`.
 - [ ] Establish truthful Platform Contract manifest state after the current nine-system schema is verified.
 

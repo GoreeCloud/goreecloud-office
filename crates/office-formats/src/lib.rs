@@ -6,6 +6,9 @@
 
 #![forbid(unsafe_code)]
 
+/// Integrity-record semantics that do not compute cryptographic digests.
+pub mod integrity;
+
 /// Decoded manifest and Writer content semantic validation.
 pub mod semantic;
 

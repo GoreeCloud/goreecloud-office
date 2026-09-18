@@ -699,8 +699,14 @@ mod tests {
 
     #[test]
     fn compression_method_codes_round_trip() {
-        assert_eq!(CompressionMethod::from_zip_method(0), CompressionMethod::Store);
-        assert_eq!(CompressionMethod::from_zip_method(8), CompressionMethod::Deflate);
+        assert_eq!(
+            CompressionMethod::from_zip_method(0),
+            CompressionMethod::Store
+        );
+        assert_eq!(
+            CompressionMethod::from_zip_method(8),
+            CompressionMethod::Deflate
+        );
         assert_eq!(
             CompressionMethod::from_zip_method(93),
             CompressionMethod::Unsupported(93)
@@ -736,13 +742,7 @@ mod tests {
         );
 
         let mut symlink = valid_writer_entries();
-        symlink[2] = PackageEntry::new(
-            METADATA_PART,
-            CompressionMethod::Store,
-            0,
-            0,
-            true,
-        );
+        symlink[2] = PackageEntry::new(METADATA_PART, CompressionMethod::Store, 0, 0, true);
         assert_eq!(
             validate_writer_entry_table(&symlink, PackageLimits::default()),
             Err(PackageStructureError::SymbolicLink {
@@ -774,13 +774,8 @@ mod tests {
     #[test]
     fn writer_entry_table_enforces_size_limits() {
         let mut entry_too_large = valid_writer_entries();
-        entry_too_large[2] = PackageEntry::new(
-            METADATA_PART,
-            CompressionMethod::Store,
-            101,
-            101,
-            false,
-        );
+        entry_too_large[2] =
+            PackageEntry::new(METADATA_PART, CompressionMethod::Store, 101, 101, false);
         let limits = PackageLimits::new(32, 100, 10_000, 1000);
         assert_eq!(
             validate_writer_entry_table(&entry_too_large, limits),
@@ -801,13 +796,7 @@ mod tests {
     #[test]
     fn writer_entry_table_enforces_compression_ratio() {
         let mut entries = valid_writer_entries();
-        entries[2] = PackageEntry::new(
-            METADATA_PART,
-            CompressionMethod::Deflate,
-            1001,
-            1,
-            false,
-        );
+        entries[2] = PackageEntry::new(METADATA_PART, CompressionMethod::Deflate, 1001, 1, false);
 
         assert_eq!(
             validate_writer_entry_table(&entries, PackageLimits::default()),

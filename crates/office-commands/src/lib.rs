@@ -374,6 +374,9 @@ mod tests {
         commands.undo(&mut document).unwrap();
         commands.undo(&mut document).unwrap();
         assert_eq!(text(&document, paragraph), "A");
-        assert_eq!(commands.undo(&mut document), Err(CommandError::NothingToUndo));
+        assert_eq!(
+            commands.undo(&mut document),
+            Err(CommandError::NothingToUndo)
+        );
     }
 }

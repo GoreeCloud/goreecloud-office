@@ -6,6 +6,9 @@
 
 #![forbid(unsafe_code)]
 
+/// Decoded manifest and Writer content semantic validation.
+pub mod semantic;
+
 use std::collections::BTreeSet;
 use std::error::Error;
 use std::fmt;

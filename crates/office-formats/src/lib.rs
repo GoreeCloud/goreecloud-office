@@ -781,8 +781,8 @@ mod tests {
             validate_writer_entry_table(&entry_too_large, limits),
             Err(PackageStructureError::EntryTooLarge {
                 path: METADATA_PART.to_owned(),
-                actual: 101,
-                maximum: 100
+                actual: 601,
+                maximum: 600
             })
         );
 

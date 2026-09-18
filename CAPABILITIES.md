@@ -13,7 +13,7 @@ This repository currently provides a bounded Development source foundation for t
 - Paragraph-style creation and assignment.
 - Reversible insert, delete, and style commands.
 - Bounded undo/redo command history.
-- Dependency-free native package identity, archive-entry path safety, Writer v1 package-structure/resource-limit validation, decoded Writer manifest/content semantics, and decoded metadata/relationships/compatibility record semantics.
+- Dependency-free native package identity, archive-entry path safety, Writer v1 package-structure/resource-limit validation, decoded Writer/common-record semantics, and integrity-record structure/coverage/byte-length semantics without cryptographic digest computation.
 - Source validation through formatting, build, unit tests, and Clippy.
 
 ## User Capabilities
@@ -39,7 +39,7 @@ None yet beyond repository development and CI workflows.
 
 ## Data and Interoperability
 
-No persistence or import/export capability is implemented. The Rust workspace now contains dependency-free native package identity, extension/media-type mapping, version-major identity, archive-entry path safety, and library-neutral Writer v1 entry-table validation for duplicate paths, symlinks, supported compression methods, required parts, mimetype ordering/storage, size ceilings, and compression-ratio limits. Concrete ZIP parsing, JSON decoding/JSON Schema evaluation, integrity-record validation/digest verification, and package read/write remain unimplemented. The machine-readable schemas, fixture, and reference validator remain governed project evidence outside the repository until their migration is completed.
+No persistence or import/export capability is implemented. The Rust workspace now contains dependency-free native package identity, extension/media-type mapping, version-major identity, archive-entry path safety, and library-neutral Writer v1 entry-table validation for duplicate paths, symlinks, supported compression methods, required parts, mimetype ordering/storage, size ceilings, and compression-ratio limits. Concrete ZIP parsing, JSON decoding/JSON Schema evaluation, cryptographic SHA-256 digest computation/verification, and package read/write remain unimplemented. The machine-readable schemas, fixture, and reference validator remain governed project evidence outside the repository until their migration is completed.
 
 ## Supported Platforms and Interfaces
 

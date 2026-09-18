@@ -644,7 +644,7 @@ pub fn validate_writer_entry_table(
         }
     }
 
-    if entries.first().map(|entry| entry.path()) != Some(MIMETYPE_PART) {
+    if entries.first().map(PackageEntry::path) != Some(MIMETYPE_PART) {
         return Err(PackageStructureError::MimetypeNotFirst);
     }
 

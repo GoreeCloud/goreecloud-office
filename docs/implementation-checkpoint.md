@@ -43,6 +43,6 @@ This checkpoint establishes the first bounded Rust implementation for the GoreeC
 
 ## Acceptance Boundary
 
-This checkpoint remains Development source until the exact pull-request head passes repository validation and is reviewed and merged through the governed source-control workflow.
+This checkpoint was merged through PR #1 to authoritative `main` as `f1d58c94fff485221cff14dc8683848094bba216` after exact-head validation passed. The push-triggered Rust Foundation workflow on that authoritative commit also passed.
 
-Even after merge, the implemented slice is only a document/command foundation and must not be represented as a usable Office or Writer release.
+The implemented slice remains Development-only: it is a document/command foundation and must not be represented as a usable Office or Writer release, production-ready state, or Stable qualification.

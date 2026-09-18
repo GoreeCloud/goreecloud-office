@@ -85,7 +85,7 @@ pub fn is_rfc3339_timestamp(value: &str) -> bool {
     if bytes.get(index) == Some(&b'.') {
         index += 1;
         let start = index;
-        while bytes.get(index).is_some_and(|byte| byte.is_ascii_digit()) {
+        while bytes.get(index).is_some_and(u8::is_ascii_digit) {
             index += 1;
         }
         if index == start {
@@ -95,7 +95,7 @@ pub fn is_rfc3339_timestamp(value: &str) -> bool {
 
     match bytes.get(index) {
         Some(b'Z') => index + 1 == bytes.len(),
-        Some(b'+') | Some(b'-') if index + 6 == bytes.len() => {
+        Some(b'+' | b'-') if index + 6 == bytes.len() => {
             bytes.get(index + 3) == Some(&b':')
                 && digits(bytes, index + 1, 2).is_some_and(|hour| hour <= 23)
                 && digits(bytes, index + 4, 2).is_some_and(|minute| minute <= 59)
@@ -209,7 +209,7 @@ impl Error for WriterManifestError {}
 ///
 /// # Errors
 ///
-/// Returns WriterManifestError when a governed manifest invariant is violated.
+/// Returns `WriterManifestError` when a governed manifest invariant is violated.
 pub fn validate_writer_manifest(manifest: &WriterManifest<'_>) -> Result<(), WriterManifestError> {
     if manifest.format_family != FORMAT_FAMILY {
         return Err(WriterManifestError::UnsupportedFormatFamily);
@@ -320,7 +320,7 @@ impl Error for WriterDocumentError {}
 ///
 /// # Errors
 ///
-/// Returns WriterDocumentError when version or identity invariants are violated.
+/// Returns `WriterDocumentError` when version or identity invariants are violated.
 pub fn validate_writer_document(
     document: &WriterDocument<'_>,
     expected_document_id: &str,

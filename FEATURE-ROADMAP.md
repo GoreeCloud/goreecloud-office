@@ -13,6 +13,7 @@ The shared Rust Office Engine foundation is under active Development. Authoritat
 - [x] Select AGPL-3.0-or-later for this primary repository.
 - [x] Establish repository Rust workspace and CI.
 - [x] Implement the first document and command source foundation.
+- [x] Implement the dependency-free native package identity and archive-entry path-safety foundation.
 - [x] Complete the mandatory repository documentation baseline and verify it on authoritative `main`.
 - [ ] Establish truthful Platform Contract manifest state after the current nine-system schema is verified.
 

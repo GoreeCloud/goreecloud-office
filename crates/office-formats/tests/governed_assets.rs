@@ -1,3 +1,5 @@
+//! Verifies repository-local copies of governed Office Native Package v1 test assets.
+
 const DRAFT_2020_12: &str = "https://json-schema.org/draft/2020-12/schema";
 
 const SCHEMAS: [(&str, &str, usize); 6] = [

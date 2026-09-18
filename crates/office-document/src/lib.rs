@@ -192,10 +192,7 @@ impl Document {
         let default_style = StyleId(1);
         let first_block = BlockId(2);
         let mut paragraph_styles = BTreeMap::new();
-        paragraph_styles.insert(
-            default_style,
-            ParagraphStyle::new(default_style, "Normal"),
-        );
+        paragraph_styles.insert(default_style, ParagraphStyle::new(default_style, "Normal"));
 
         Self {
             id: DocumentId(document_id),

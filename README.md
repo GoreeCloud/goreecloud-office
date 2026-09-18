@@ -18,8 +18,8 @@ The first source foundation currently contains:
 - Paragraph-style creation and assignment.
 - A reversible command framework.
 - Bounded undo/redo history.
-- Dependency-free native package identity, extension/media-type mapping, and archive-entry path-safety primitives.
-- Unit-test source for document, command, and package-identity/path-safety behavior.
+- Dependency-free native package identity, extension/media-type mapping, archive-entry path safety, and Writer v1 entry-table/resource-limit validation.
+- Unit-test source for document, command, package identity/path safety, and Writer package-structure behavior.
 - Pull-request CI for formatting, build, tests, and Clippy.
 
 This does **not** yet implement a usable Office application, Writer UI, persistence, native package serialization, autosave/recovery journals, shaping/layout, rendering, PDF export, import/export, collaboration, Glaze UI, Android, web, or Linux application clients.

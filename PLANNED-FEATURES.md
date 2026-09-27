@@ -1,4 +1,6 @@
-# Feature Roadmap
+# GoreeCloud Office Suite — Planned Features
+
+> **Authority:** Repository-native planned-feature record. The former Drive roadmap is retired after verified migration.
 
 ## Current State
 

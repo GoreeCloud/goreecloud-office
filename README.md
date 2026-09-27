@@ -1,70 +1,51 @@
 # GoreeCloud Office
 
-GoreeCloud Office is the first-party productivity suite and shared editing platform for GoreeCloud.
+GoreeCloud Office is GoreeCloud's first-party productivity suite and shared editing platform.
 
-The initial engineering objective is **GoreeCloud Office Engine + GoreeCloud Writer**. The shared engine is intended to provide one canonical document model, command framework, text/layout infrastructure, graphics, styles, file formats, import/export, recovery, accessibility, and later collaboration foundations that can be reused by Writer, Spreadsheet, Presentations, Forms, and future Office applications.
+This repository is the canonical **Office product-family monorepo**. Writer, Spreadsheet, Presentations, Forms, Database, Office Server, Office Formats, Office Templates, and shared Office Engine infrastructure are maintained here as explicit component boundaries.
 
-## Current Development State
+## Repository layout
 
-This repository is in **Development**.
+- `apps/writer/`
+- `apps/spreadsheet/`
+- `apps/presentations/`
+- `apps/forms/`
+- `apps/database/`
+- `services/office-server/`
+- `packages/formats/`
+- `packages/templates/`
+- shared Rust Office Engine crates and existing repository-level infrastructure
 
-The first source foundation currently contains:
+Each application or service may retain its own build target, runtime, tests, APIs, compatibility identity, and release artifact while sharing one coordinated source repository.
 
-- A Rust workspace.
-- A canonical Writer-oriented document-domain crate.
-- Stable document, block, and paragraph-style identities.
-- Logical-Unicode paragraph text.
-- UTF-8 mutation-boundary validation.
-- Paragraph-style creation and assignment.
-- A reversible command framework.
-- Bounded undo/redo history.
-- Dependency-free native package identity, archive/path and resource validation, decoded Writer v1 manifest/content semantics, decoded metadata/relationships/compatibility semantics, and integrity-record semantics without digest computation.
-- Repository-local test-data copies of the six governed Office Native Package v1 JSON Schemas and the canonical minimal valid `.gcwriter` fixture, with source IDs and imported-byte hashes recorded for traceability.
-- Unit-test source for document, command, package structure, decoded record semantics, integrity-record behavior, and governed schema/fixture asset presence.
-- Pull-request CI for formatting, build, tests, and Clippy.
+## Current state
 
-This does **not** yet implement a usable Office application, Writer UI, persistence, native package serialization, autosave/recovery journals, shaping/layout, rendering, PDF export, import/export, collaboration, Glaze UI, Android, web, or Linux application clients.
+The repository is in **Development**. The implemented foundation includes the Rust workspace, Writer-oriented document-domain primitives, reversible commands with bounded undo/redo, native package identity and validation primitives, decoded Writer/common package semantics, governed Office Native Package v1 schemas and fixture test data, unit tests, and Rust CI.
 
-## Architecture Direction
+A usable Office application, production collaboration service, full persistence, package serialization, rendering/layout stack, import/export, Glaze UI client implementations, and Stable qualification are not yet established.
 
-The accepted architecture is:
+## Architecture direction
 
+- Product-family monorepo for tightly coupled Office applications, services, formats, templates, and shared infrastructure.
 - Rust shared Office Engine.
-- Kotlin + Jetpack Compose for Android presentation.
+- Kotlin + Jetpack Compose for Android.
 - TypeScript/browser-native web presentation with the Rust core compiled to WebAssembly.
-- Rust + GTK 4 for Linux desktop presentation.
+- Rust + GTK 4 for Linux desktop.
 - Platform-native user interfaces rather than wrapper-first clients.
-- AGPL-3.0-or-later for the primary `goreecloud-office` repository.
+- AGPL-3.0-or-later licensing for the primary Office repository.
 
-Authoritative product, architecture, format, dependency, and implementation-task records remain in the governed GoreeCloud documentation system. Repository-local records must stay synchronized with those governing sources where their scopes overlap.
+The desired provider-side name is `GoreeCloud/office`. The current connected GitHub surface does not expose repository rename controls, so the repository remains `GoreeCloud/goreecloud-office` until that provider-level migration can be completed and references reconciled.
 
-## Repository Documentation
+See `docs/decisions/0001-consolidate-office-product-family.md` for the consolidation decision.
 
-- [Specifications](SPECIFICATIONS.md)
-- [Current Features](FEATURES.md)
-- [Capabilities](CAPABILITIES.md)
-- [Feature Roadmap](FEATURE-ROADMAP.md)
-- [Benefits](BENEFITS.md)
-- [Competitive Objectives](COMPETITIVE-OBJECTIVES.md)
-- [Branding](BRANDING.md)
-- [Pre-release User Manual](USER-MANUAL.md)
-- [Privacy Policy](PRIVACY%20POLICY.md)
-- [Security](SECURITY.md)
-- [Development Notes](NOTES.md)
+## Repository documentation
+
+Repository-level product and development records remain at the root, including `SPECIFICATIONS.md`, `FEATURES.md`, `CAPABILITIES.md`, `FEATURE-ROADMAP.md`, `BENEFITS.md`, `COMPETITIVE-OBJECTIVES.md`, `BRANDING.md`, `USER-MANUAL.md`, `PRIVACY POLICY.md`, `SECURITY.md`, and `NOTES.md`.
 
 ## Validation
 
-The repository workflow validates:
-
-```text
-cargo fmt --all --check
-cargo build --workspace --all-targets
-cargo test --workspace --all-targets
-cargo clippy --workspace --all-targets -- -D warnings
-```
-
-Passing source CI is Development evidence only. It does not establish Stable qualification, platform conformance, production acceptance, or a supported release.
+The current workflow validates the Rust workspace with formatting, build, tests, and Clippy. Passing CI is Development evidence only and does not establish a Stable release.
 
 ## License
 
-GoreeCloud Office is licensed under **AGPL-3.0-or-later**. See [LICENSE](LICENSE).
+AGPL-3.0-or-later. See `LICENSE`.

@@ -34,7 +34,7 @@ A usable Office application, production collaboration service, full persistence,
 - Platform-native user interfaces rather than wrapper-first clients.
 - AGPL-3.0-or-later licensing for the primary Office repository.
 
-The desired provider-side name is `GoreeCloud/office`. The current connected GitHub surface does not expose repository rename controls, so the repository remains `GoreeCloud/goreecloud-office` until that provider-level migration can be completed and references reconciled.
+The provider migration is complete: this canonical repository is `GoreeCloud/office`. The former standalone Writer, Spreadsheet, Presentations, Forms, Database, Office Server, Office Formats, and Office Templates repositories are archived migration predecessors; active Office-family development belongs in the component paths defined here.
 
 See `docs/decisions/0001-consolidate-office-product-family.md` for the consolidation decision.
 

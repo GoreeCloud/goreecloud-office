@@ -37,11 +37,11 @@ Rejected because the satellite repositories did not have meaningful independent 
 
 ### Create a new empty `office` repository and migrate everything immediately
 
-Deferred because this repository already contains the substantive Office Engine source and the currently connected GitHub surface does not expose repository rename controls. The desired provider-side repository name remains `office` under the active naming standard.
+Not selected because the existing Office repository already contained the substantive Office Engine source. Consolidation therefore preserved that repository and its source, and the provider repository was subsequently renamed in place to `GoreeCloud/office`.
 
 ## Consequences
 
 - New Office-family work should land in this repository unless a component later develops a genuine independent lifecycle.
 - Cross-component changes can be reviewed atomically.
 - Placeholder predecessor repositories become migration predecessors rather than active development locations.
-- Repository rename to `GoreeCloud/office` and predecessor archival remain provider-level follow-up actions when supported by an authorized GitHub surface.
+- The canonical repository was renamed in place to `GoreeCloud/office`, and the eight former standalone Office component repositories were archived as migration predecessors on September 26, 2026.
